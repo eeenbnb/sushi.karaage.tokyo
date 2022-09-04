@@ -11,6 +11,7 @@
     "@octokit/rest": "^19.0.4",
     "ejs": "^3.1.8",
     "fs-extra": "^10.1.0",
+    "highlight.js": "^11.6.0",
     "markdown-it": "^13.0.1",
     "marked": "^1.0.0",
     "ts-node": "^10.9.1",

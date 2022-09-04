@@ -5,152 +5,190 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2021-04-19</title>
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.1.0/github-markdown.min.css"
+      integrity="sha512-KUoB3bZ1XRBYj1QcH4BHCQjurAZnCO3WdrswyLDtp7BMwCw7dPZngSLqILf68SGgvnWHTD5pPaYrXi6wiRJ65g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"
+      integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css"
+    />
   </head>
   <body>
     <main>
       <article>
         <!-- article -->
         <h1>パンくずリストの追加と構造化データの生成</h1>
-<div class="info">
-  <p class="info__date">
-    2021/04/19
-  </p>
-  <div class="info__tags">
-    <p class="info__tags__one">Angular</p>
-  </div>
-</div>
-<h2>はじめに</h2>
-<p>パンくずリストを作成する。<br>
-ページヘッダーの下辺りに表示する。</p>
-<h2>パンくずリストとは?</h2>
-<p><code>ホーム &gt; 記事 &gt; タイトル</code> みたいなやつ。</p>
-<h2>構造化データとは？</h2>
-<p>google等の検索結果に表示するときになんかかっこよく表示してくれるやつ。<br>
-<a href="https://search.google.com/test/rich-results">https://search.google.com/test/rich-results</a><br>
-このページで確認することができる。</p>
-<p>実装的な話をすると</p>
-<ul>
-<li><code>JSON-LD</code>
-<ul>
-<li>headerにデータを挿入する</li>
-</ul>
-</li>
-<li><code>RDFa</code>
-<ul>
-<li>htmlのelementにattributeとして挿入する。</li>
-</ul>
-</li>
-<li><code>microdata</code>
-<ul>
-<li>上記と同様、プロパティネームだけ違う。</li>
-</ul>
-</li>
-</ul>
-<p>まあ詳しくは以下のページに書いてある。<br>
-<a href="https://developers.google.com/search/docs/data-types/breadcrumb?hl=ja">https://developers.google.com/search/docs/data-types/breadcrumb?hl=ja</a></p>
-<p>今回はコンポーネント内に内包させたいので <code>microdata</code> を使用する。</p>
-<h2>AngularのComponentに構造化データを挿入</h2>
-<p><code>microdata</code> を使用するのでHTML上に生成する。</p>
-<pre><code class="language-html">&lt;ol class=&quot;breadcrumb&quot; itemscope itemtype=&quot;https://schema.org/BreadcrumbList&quot;&gt;
-  &lt;ng-container *ngFor=&quot;let breadcrumb of breadcrumbs;let i = index&quot;&gt;
-    &lt;li class=&quot;breadcrumb__item&quot; itemprop=&quot;itemListElement&quot; itemscope itemtype=&quot;https://schema.org/ListItem&quot;&gt;
-      &lt;a itemprop=&quot;item&quot; [routerLink]=&quot;breadcrumb.path&quot;&gt;
-        &lt;span itemprop=&quot;name&quot;&gt;{{breadcrumb.name}}&lt;/span&gt;
-      &lt;/a&gt;
-      &lt;meta itemprop=&quot;position&quot; [content]=&quot;i&quot;/&gt;
-    &lt;/li&gt;
-  &lt;/ng-container&gt;
-&lt;/ol&gt;
+        <div class="info">
+          <p class="info__date">2021/04/19</p>
+          <div class="info__tags">
+            <p class="info__tags__one">Angular</p>
+          </div>
+        </div>
+        <h2>はじめに</h2>
+        <p>
+          パンくずリストを作成する。<br />
+          ページヘッダーの下辺りに表示する。
+        </p>
+        <h2>パンくずリストとは?</h2>
+        <p><code>ホーム &gt; 記事 &gt; タイトル</code> みたいなやつ。</p>
+        <h2>構造化データとは？</h2>
+        <p>
+          google等の検索結果に表示するときになんかかっこよく表示してくれるやつ。<br />
+          <a href="https://search.google.com/test/rich-results"
+            >https://search.google.com/test/rich-results</a
+          ><br />
+          このページで確認することができる。
+        </p>
+        <p>実装的な話をすると</p>
+        <ul>
+          <li>
+            <code>JSON-LD</code>
+            <ul>
+              <li>headerにデータを挿入する</li>
+            </ul>
+          </li>
+          <li>
+            <code>RDFa</code>
+            <ul>
+              <li>htmlのelementにattributeとして挿入する。</li>
+            </ul>
+          </li>
+          <li>
+            <code>microdata</code>
+            <ul>
+              <li>上記と同様、プロパティネームだけ違う。</li>
+            </ul>
+          </li>
+        </ul>
+        <p>
+          まあ詳しくは以下のページに書いてある。<br />
+          <a
+            href="https://developers.google.com/search/docs/data-types/breadcrumb?hl=ja"
+            >https://developers.google.com/search/docs/data-types/breadcrumb?hl=ja</a
+          >
+        </p>
+        <p>
+          今回はコンポーネント内に内包させたいので
+          <code>microdata</code> を使用する。
+        </p>
+        <h2>AngularのComponentに構造化データを挿入</h2>
+        <p><code>microdata</code> を使用するのでHTML上に生成する。</p>
+        <pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">ol</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;breadcrumb&quot;</span> <span class="hljs-attr">itemscope</span> <span class="hljs-attr">itemtype</span>=<span class="hljs-string">&quot;https://schema.org/BreadcrumbList&quot;</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">ng-container</span> *<span class="hljs-attr">ngFor</span>=<span class="hljs-string">&quot;let breadcrumb of breadcrumbs;let i = index&quot;</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;breadcrumb__item&quot;</span> <span class="hljs-attr">itemprop</span>=<span class="hljs-string">&quot;itemListElement&quot;</span> <span class="hljs-attr">itemscope</span> <span class="hljs-attr">itemtype</span>=<span class="hljs-string">&quot;https://schema.org/ListItem&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">itemprop</span>=<span class="hljs-string">&quot;item&quot;</span> [<span class="hljs-attr">routerLink</span>]=<span class="hljs-string">&quot;breadcrumb.path&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">itemprop</span>=<span class="hljs-string">&quot;name&quot;</span>&gt;</span>{{breadcrumb.name}}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">itemprop</span>=<span class="hljs-string">&quot;position&quot;</span> [<span class="hljs-attr">content</span>]=<span class="hljs-string">&quot;i&quot;</span>/&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">ng-container</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">ol</span>&gt;</span>
 </code></pre>
-<pre><code class="language-javascript">import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs';
+        <pre><code class="language-javascript"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Component</span>, <span class="hljs-title class_">OnInit</span>, <span class="hljs-title class_">OnDestroy</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@angular/core&#x27;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Subscription</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;rxjs&#x27;</span>;
 
-import { BreadcrumbService, Breadcrumbs } from '../../../service/breadcrumb/breadcrumb.service'
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">BreadcrumbService</span>, <span class="hljs-title class_">Breadcrumbs</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../../../service/breadcrumb/breadcrumb.service&#x27;</span>
 
-@Component({
-  selector: 'item-breadcrumb',
-  templateUrl: './item-breadcrumb.component.html',
-  styleUrls: ['./item-breadcrumb.component.scss']
+@<span class="hljs-title class_">Component</span>({
+  <span class="hljs-attr">selector</span>: <span class="hljs-string">&#x27;item-breadcrumb&#x27;</span>,
+  <span class="hljs-attr">templateUrl</span>: <span class="hljs-string">&#x27;./item-breadcrumb.component.html&#x27;</span>,
+  <span class="hljs-attr">styleUrls</span>: [<span class="hljs-string">&#x27;./item-breadcrumb.component.scss&#x27;</span>]
 })
-export class ItemBreadcrumbComponent implements OnInit, OnDestroy {
-  breadcrumbs:Breadcrumbs = [];
-  breadcrumbsSubscription:Subscription;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ItemBreadcrumbComponent</span> implements <span class="hljs-title class_">OnInit</span>, <span class="hljs-title class_">OnDestroy</span> {
+  <span class="hljs-attr">breadcrumbs</span>:<span class="hljs-title class_">Breadcrumbs</span> = [];
+  <span class="hljs-attr">breadcrumbsSubscription</span>:<span class="hljs-title class_">Subscription</span>;
 
-  constructor(
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">
     private breadcrumbService:BreadcrumbService
-  ) {
-    this.breadcrumbsSubscription = this.breadcrumbService.getBreadcrumbsChageEvent().subscribe(
-      (breadcrumbs:Breadcrumbs)=&gt;{
-        console.log(&quot;breadcrumbs&quot;);
+  </span>) {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">breadcrumbsSubscription</span> = <span class="hljs-variable language_">this</span>.<span class="hljs-property">breadcrumbService</span>.<span class="hljs-title function_">getBreadcrumbsChageEvent</span>().<span class="hljs-title function_">subscribe</span>(
+      <span class="hljs-function">(<span class="hljs-params">breadcrumbs:Breadcrumbs</span>)=&gt;</span>{
+        <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&quot;breadcrumbs&quot;</span>);
       }
     );
   }
 
-  ngOnInit(): void {
+  <span class="hljs-title function_">ngOnInit</span>(): <span class="hljs-keyword">void</span> {
 
   }
 
-  ngOnDestroy(): void {
-    this.breadcrumbsSubscription.unsubscribe();
+  <span class="hljs-title function_">ngOnDestroy</span>(): <span class="hljs-keyword">void</span> {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">breadcrumbsSubscription</span>.<span class="hljs-title function_">unsubscribe</span>();
   }
 }
 </code></pre>
-<p>routerを使用する場合はコンポーネントにデータをservice経由で送信する。</p>
-<pre><code class="language-javascript">import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
+        <p>
+          routerを使用する場合はコンポーネントにデータをservice経由で送信する。
+        </p>
+        <pre><code class="language-javascript"><span class="hljs-keyword">import</span> { <span class="hljs-title class_">Injectable</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@angular/core&#x27;</span>;
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Subject</span>, <span class="hljs-title class_">Observable</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;rxjs&#x27;</span>;
 
-export interface Breadcrumb{
-  path:string[],
-  name:string,
+<span class="hljs-keyword">export</span> interface <span class="hljs-title class_">Breadcrumb</span>{
+  <span class="hljs-attr">path</span>:string[],
+  <span class="hljs-attr">name</span>:string,
 }
-export type Breadcrumbs = Breadcrumb[];
+<span class="hljs-keyword">export</span> type <span class="hljs-title class_">Breadcrumbs</span> = <span class="hljs-title class_">Breadcrumb</span>[];
 
-@Injectable({
-  providedIn: 'root'
+@<span class="hljs-title class_">Injectable</span>({
+  <span class="hljs-attr">providedIn</span>: <span class="hljs-string">&#x27;root&#x27;</span>
 })
-export class BreadcrumbService {
-  private setItem:Breadcrumbs = []
-  private sharedDataSource = new Subject&lt;Breadcrumbs&gt;();
-  private sharedDataSourceObservable = this.sharedDataSource.asObservable();
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">BreadcrumbService</span> {
+  private <span class="hljs-attr">setItem</span>:<span class="hljs-title class_">Breadcrumbs</span> = []
+  private sharedDataSource = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Subject</span>&lt;<span class="hljs-title class_">Breadcrumbs</span>&gt;();
+  private sharedDataSourceObservable = <span class="hljs-variable language_">this</span>.<span class="hljs-property">sharedDataSource</span>.<span class="hljs-title function_">asObservable</span>();
 
-  constructor() { }
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params"></span>) { }
 
-  getBreadcrumbsChageEvent():Observable&lt;Breadcrumbs&gt;{
-    return this.sharedDataSourceObservable;
+  <span class="hljs-title function_">getBreadcrumbsChageEvent</span>():<span class="hljs-title class_">Observable</span>&lt;<span class="hljs-title class_">Breadcrumbs</span>&gt;{
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">sharedDataSourceObservable</span>;
   }
 
-  setBreadcrumbs(breadcrumbs:Breadcrumbs):void{
-    this.setItem = breadcrumbs;
-    this.sharedDataSource.next(breadcrumbs);
+  <span class="hljs-title function_">setBreadcrumbs</span>(<span class="hljs-attr">breadcrumbs</span>:<span class="hljs-title class_">Breadcrumbs</span>):<span class="hljs-keyword">void</span>{
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">setItem</span> = breadcrumbs;
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">sharedDataSource</span>.<span class="hljs-title function_">next</span>(breadcrumbs);
   }
 
-  getSetBreadcrumbs(){
-    return this.setItem;
+  <span class="hljs-title function_">getSetBreadcrumbs</span>(<span class="hljs-params"></span>){
+    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>.<span class="hljs-property">setItem</span>;
   }
 }
 </code></pre>
-<p>使用例</p>
-<pre><code class="language-HTML">&lt;item-breadcrumb&gt;&lt;/item-breadcrumb&gt;
+        <p>使用例</p>
+        <pre><code class="language-HTML"><span class="hljs-tag">&lt;<span class="hljs-name">item-breadcrumb</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">item-breadcrumb</span>&gt;</span>
 </code></pre>
-<pre><code class="language-javascript">@Component({
+        <pre><code class="language-javascript">@<span class="hljs-title class_">Component</span>({
   ...
 })
-export class HogeComponent implements OnInit {
-  constructor(
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">HogeComponent</span> implements <span class="hljs-title class_">OnInit</span> {
+  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">
     private breadcrumbService:BreadcrumbService
-  ) { }
+  </span>) { }
 
-  ngOnInit(): void {
-    this.breadcrumbService.setBreadcrumbs([
-      { path:[&quot;/&quot;], name:&quot;top&quot; },
-      { path:[&quot;/&quot;,&quot;hoge&quot;], name:&quot;hoge&quot; },
-      { path:[&quot;/&quot;,&quot;hoge&quot;,&quot;fuga&quot;], name:&quot;fuga&quot; },
+  <span class="hljs-title function_">ngOnInit</span>(): <span class="hljs-keyword">void</span> {
+    <span class="hljs-variable language_">this</span>.<span class="hljs-property">breadcrumbService</span>.<span class="hljs-title function_">setBreadcrumbs</span>([
+      { <span class="hljs-attr">path</span>:[<span class="hljs-string">&quot;/&quot;</span>], <span class="hljs-attr">name</span>:<span class="hljs-string">&quot;top&quot;</span> },
+      { <span class="hljs-attr">path</span>:[<span class="hljs-string">&quot;/&quot;</span>,<span class="hljs-string">&quot;hoge&quot;</span>], <span class="hljs-attr">name</span>:<span class="hljs-string">&quot;hoge&quot;</span> },
+      { <span class="hljs-attr">path</span>:[<span class="hljs-string">&quot;/&quot;</span>,<span class="hljs-string">&quot;hoge&quot;</span>,<span class="hljs-string">&quot;fuga&quot;</span>], <span class="hljs-attr">name</span>:<span class="hljs-string">&quot;fuga&quot;</span> },
     ])
   }
 }
 
 </code></pre>
-
       </article>
     </main>
   </body>
