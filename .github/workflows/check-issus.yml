@@ -1,7 +1,8 @@
+name: Issues check
+
 on:
   issues:
-    types:
-      - assigned
+    types: ["labeled"]
 
 jobs:
   build:
