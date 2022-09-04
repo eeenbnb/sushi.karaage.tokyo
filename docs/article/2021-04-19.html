@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>2021-04-19</title>
+  </head>
+  <body>
+    <main>
+      <article>
+        <!-- article -->
+        <h1>パンくずリストの追加と構造化データの生成</h1>
+<div class="info">
+  <p class="info__date">
+    2021/04/19
+  </p>
+  <div class="info__tags">
+    <p class="info__tags__one">Angular</p>
+  </div>
+</div>
+<h2>はじめに</h2>
+<p>パンくずリストを作成する。<br>
+ページヘッダーの下辺りに表示する。</p>
+<h2>パンくずリストとは?</h2>
+<p><code>ホーム &gt; 記事 &gt; タイトル</code> みたいなやつ。</p>
+<h2>構造化データとは？</h2>
+<p>google等の検索結果に表示するときになんかかっこよく表示してくれるやつ。<br>
+<a href="https://search.google.com/test/rich-results">https://search.google.com/test/rich-results</a><br>
+このページで確認することができる。</p>
+<p>実装的な話をすると</p>
+<ul>
+<li><code>JSON-LD</code>
+<ul>
+<li>headerにデータを挿入する</li>
+</ul>
+</li>
+<li><code>RDFa</code>
+<ul>
+<li>htmlのelementにattributeとして挿入する。</li>
+</ul>
+</li>
+<li><code>microdata</code>
+<ul>
+<li>上記と同様、プロパティネームだけ違う。</li>
+</ul>
+</li>
+</ul>
+<p>まあ詳しくは以下のページに書いてある。<br>
+<a href="https://developers.google.com/search/docs/data-types/breadcrumb?hl=ja">https://developers.google.com/search/docs/data-types/breadcrumb?hl=ja</a></p>
+<p>今回はコンポーネント内に内包させたいので <code>microdata</code> を使用する。</p>
+<h2>AngularのComponentに構造化データを挿入</h2>
+<p><code>microdata</code> を使用するのでHTML上に生成する。</p>
+<pre><code class="language-html">&lt;ol class=&quot;breadcrumb&quot; itemscope itemtype=&quot;https://schema.org/BreadcrumbList&quot;&gt;
+  &lt;ng-container *ngFor=&quot;let breadcrumb of breadcrumbs;let i = index&quot;&gt;
+    &lt;li class=&quot;breadcrumb__item&quot; itemprop=&quot;itemListElement&quot; itemscope itemtype=&quot;https://schema.org/ListItem&quot;&gt;
+      &lt;a itemprop=&quot;item&quot; [routerLink]=&quot;breadcrumb.path&quot;&gt;
+        &lt;span itemprop=&quot;name&quot;&gt;{{breadcrumb.name}}&lt;/span&gt;
+      &lt;/a&gt;
+      &lt;meta itemprop=&quot;position&quot; [content]=&quot;i&quot;/&gt;
+    &lt;/li&gt;
+  &lt;/ng-container&gt;
+&lt;/ol&gt;
+</code></pre>
+<pre><code class="language-javascript">import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+
+import { BreadcrumbService, Breadcrumbs } from '../../../service/breadcrumb/breadcrumb.service'
+
+@Component({
+  selector: 'item-breadcrumb',
+  templateUrl: './item-breadcrumb.component.html',
+  styleUrls: ['./item-breadcrumb.component.scss']
+})
+export class ItemBreadcrumbComponent implements OnInit, OnDestroy {
+  breadcrumbs:Breadcrumbs = [];
+  breadcrumbsSubscription:Subscription;
+
+  constructor(
+    private breadcrumbService:BreadcrumbService
+  ) {
+    this.breadcrumbsSubscription = this.breadcrumbService.getBreadcrumbsChageEvent().subscribe(
+      (breadcrumbs:Breadcrumbs)=&gt;{
+        console.log(&quot;breadcrumbs&quot;);
+      }
+    );
+  }
+
+  ngOnInit(): void {
+
+  }
+
+  ngOnDestroy(): void {
+    this.breadcrumbsSubscription.unsubscribe();
+  }
+}
+</code></pre>
+<p>routerを使用する場合はコンポーネントにデータをservice経由で送信する。</p>
+<pre><code class="language-javascript">import { Injectable } from '@angular/core';
+import { Subject, Observable } from 'rxjs';
+
+export interface Breadcrumb{
+  path:string[],
+  name:string,
+}
+export type Breadcrumbs = Breadcrumb[];
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BreadcrumbService {
+  private setItem:Breadcrumbs = []
+  private sharedDataSource = new Subject&lt;Breadcrumbs&gt;();
+  private sharedDataSourceObservable = this.sharedDataSource.asObservable();
+
+  constructor() { }
+
+  getBreadcrumbsChageEvent():Observable&lt;Breadcrumbs&gt;{
+    return this.sharedDataSourceObservable;
+  }
+
+  setBreadcrumbs(breadcrumbs:Breadcrumbs):void{
+    this.setItem = breadcrumbs;
+    this.sharedDataSource.next(breadcrumbs);
+  }
+
+  getSetBreadcrumbs(){
+    return this.setItem;
+  }
+}
+</code></pre>
+<p>使用例</p>
+<pre><code class="language-HTML">&lt;item-breadcrumb&gt;&lt;/item-breadcrumb&gt;
+</code></pre>
+<pre><code class="language-javascript">@Component({
+  ...
+})
+export class HogeComponent implements OnInit {
+  constructor(
+    private breadcrumbService:BreadcrumbService
+  ) { }
+
+  ngOnInit(): void {
+    this.breadcrumbService.setBreadcrumbs([
+      { path:[&quot;/&quot;], name:&quot;top&quot; },
+      { path:[&quot;/&quot;,&quot;hoge&quot;], name:&quot;hoge&quot; },
+      { path:[&quot;/&quot;,&quot;hoge&quot;,&quot;fuga&quot;], name:&quot;fuga&quot; },
+    ])
+  }
+}
+
+</code></pre>
+
+      </article>
+    </main>
+  </body>
+</html>
